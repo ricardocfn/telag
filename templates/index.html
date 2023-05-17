@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agendador de Postagens do Telegram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #0088cc;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #0088cc;
+        }
+
+        input[type="file"],
+        textarea,
+        input[type="text"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #0088cc;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[type="submit"] {
+            background-color: #0088cc;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #006699;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #0088cc;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .new-schedule-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agendador de Postagens do Telegram</h1>
+        <form method="POST" action="/" enctype="multipart/form-data">
+            <label for="image">Imagem:</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <label for="caption">Legenda:</label>
+            <textarea id="caption" name="caption"></textarea>
+
+            <label for="date">Data e Hora:</label>
+            <input type="datetime-local" id="date" name="date">
+
+            <input type="submit" value="Agendar Postagem">
+        </form>
+
+        {% if message %}
+        <div class="message">{{ message }}</div>
+        <div class="new-schedule-btn">
+            <a href="/" class="new-schedule-link">Novo Agendamento</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
