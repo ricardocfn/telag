@@ -65,4 +65,4 @@ def send_post(image_path, caption, date):
     os.remove(image_path)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 3000)))
