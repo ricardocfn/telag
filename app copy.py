@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request
 from datetime import datetime
 import threading
 import time
@@ -7,27 +7,10 @@ from werkzeug.utils import secure_filename
 import telebot
 
 app = Flask(__name__)
-app.secret_key = '30secondstomars'  # Substitua 'sua_chave_secreta_aqui' por uma chave secreta de sua escolha
 bot = telebot.TeleBot('6151054063:AAFDJe8ZzBnNIG-b-CG6EUSYgX-YWt9p0CY')  # Substitua 'YOUR_BOT_TOKEN' pelo token do seu bot
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    message = None
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == 'ricardo' and password == '0710':  # Substitua 'admin' e 'password' pelas credenciais desejadas
-            session['logged_in'] = True
-            return redirect(url_for('home'))
-        else:
-            message = "Credenciais inválidas!"
-    return render_template('login.html', message=message)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-
     message = None  # Inicializa a variável da mensagem como None
 
     if request.method == 'POST':
