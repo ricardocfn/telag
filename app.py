@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import telegram
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
@@ -55,6 +55,11 @@ def button(update, context):
         query.message.reply_text('👋')
 
 
+
+@app.route('/')
+def index():
+    return 'Bot em execução!'
+
 @app.route('/<token>', methods=['POST'])
 def webhook(token):
     if token == TOKEN:
@@ -62,9 +67,7 @@ def webhook(token):
         dispatcher.process_update(update)
     return 'ok'
 
-
 def main():
-    global updater, bot, dispatcher
     bot = telegram.Bot(TOKEN)
     updater = Updater(token=TOKEN, use_context=True)
     dispatcher = updater.dispatcher
@@ -76,8 +79,6 @@ def main():
     updater.start_polling()
     updater.idle()
 
-
 if __name__ == '__main__':
     main()
     app.run(host='0.0.0.0', port=3000)
-

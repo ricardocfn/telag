@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal TipsMaster</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap Switch -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap Switch JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
+    <script>
+        $(function() {
+            $('#botSwitch').bootstrapSwitch();
+            $('#botSwitch').on('switchChange.bootstrapSwitch', function(event, state) {
+                $.post('/toggle');
+            });
+        });
+    </script>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="card-title">Canal TipsMaster</h1>
+                        <hr>
+                        <h5 class="card-subtitle mb-3">Bot Status:</h5>
+                        <input type="checkbox" id="botSwitch" {% if bot_status %}checked{% endif %} data-toggle="toggle" data-onstyle="success" data-offstyle="danger">
+                        <hr>
+                        <p class="text-muted">Desenvolvido por Ricardo C.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
