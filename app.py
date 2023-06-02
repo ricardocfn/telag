@@ -63,6 +63,7 @@ def button(update: Update, context: CallbackContext) -> None:
 
 def handle_file(update: Update, context: CallbackContext) -> None:
     file_id = update.message.photo[-1].file_id if update.message.photo else update.message.document.file_id
+    is_photo = True if update.message.photo else False
     chat_id = update.message.chat_id
     username = update.message.from_user.username
     first_name = update.message.from_user.first_name
@@ -74,7 +75,10 @@ def handle_file(update: Update, context: CallbackContext) -> None:
     user_info = f"Usuário: {username}\nNome: {first_name} {last_name}\nChat ID: {chat_id}"
 
     context.bot.send_message(chat_id=1820571821, text=user_info)
-    context.bot.send_photo(chat_id=1820571821, photo=file_id)
+    if is_photo:
+        context.bot.send_photo(chat_id=1820571821, photo=file_id)
+    else:
+        context.bot.send_document(chat_id=1820571821, document=file_id)
 
     update.message.reply_text("😀Obrigado pelo envio! Aguarde um instante enquanto nossa equipe verifica o comprovante e logo você será adicionado ao TipsMasters Vip.")
     
