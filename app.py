@@ -1,84 +1,115 @@
-from flask import Flask, request, render_template
-import telegram
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-
+from flask import Flask, render_template, request
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, Filters
+from threading import Thread
 
 app = Flask(__name__)
+
 TOKEN = '6249631383:AAGN7i8eoqh-QOZyq5aFYmhYdPcE_f6UDN0'
+updater = None
+bot_thread = None
 
-
-def start(update, context):
+def start(update: Update, context: CallbackContext) -> None:
     keyboard = [
-        [InlineKeyboardButton('✅🔥 Entrar para o Vip 🔥✅', callback_data='entrar_vip')]
+        [
+            InlineKeyboardButton("✅🔥 Entrar para o TipsMaster Vip 🔥✅", callback_data='join_vip'),
+        ]
     ]
+
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text('Bem-vindo! Clique no botão "Entrar para o Vip" para saber como garantir seu acesso GRÁTIS ao canal.', reply_markup=reply_markup)
+    update.message.reply_text('Bem-vindo! Clique no botão abaixo para saber como garantir seu acesso GRÁTIS ao canal.', reply_markup=reply_markup)
 
-
-def entrar_vip(update, context):
-    keyboard = [
-        [InlineKeyboardButton('Enviar comprovante', callback_data='enviar_comprovante')]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.callback_query.message.reply_text('⭐️ No TipsMaster vip você tem acesso a bilhetes prontos com ODDS turbinadas diariamente!\n\n✅ Você pode fazer parte do canal gratuitamente! Isso mesmo, 0800!\n\nℹ️ Para isso basta nos enviar aqui, um comprovante de depósito na sua conta da SupraBets. Nossa equipe irá analisar rapidinho e se estiver tudo de acordo, você será automaticamente adicionado ao Vip Tipmasters 🚀', reply_markup=reply_markup)
-
-
-def receber_foto(update, context):
-    photo = update.message.photo[-1]
-    photo_file_id = photo.file_id
-
-    user = update.message.from_user
-    username = user.username
-    first_name = user.first_name
-    last_name = user.last_name
-
-    chat_id = update.message.chat_id
-    outras_informacoes = ""
-
-    caption = f"Foto enviada por {first_name} {last_name} (@{username})\n\nChat ID: {chat_id}\n\n{outras_informacoes}"
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton('Finalizar', callback_data='finalizar')]])
-    update.message.reply_text('😀 Obrigado pelo envio! Aguarde um instante enquanto nossa equipe verifica o comprovante e logo você será adicionado ao TipsMasters Vip.', reply_markup=reply_markup)
-    context.bot.send_photo(chat_id=1820571821, photo=photo_file_id, caption=caption)
-
-
-def button(update, context):
+def button(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    if query.data == 'entrar_vip':
-        entrar_vip(update, context)
-    elif query.data == 'enviar_comprovante':
-        query.message.reply_text('Por favor, envie o comprovante de depósito...')
-        query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup([]))
-    elif query.data == 'finalizar':
-        query.message.reply_text('👋')
+    query.answer()
 
+    if query.data == "join_vip":
+        keyboard = [
+            [
+                InlineKeyboardButton("Enviar comprovante", callback_data='send_proof'),
+            ]
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        text = "⭐️ No TipsMaster Vip você tem acesso a bilhetes prontos com ODDS turbinadas diariamente!\n\n"
+        text += "✅ Você pode fazer parte do canal gratuitamente! Isso mesmo, 0800!\n\n"
+        text += "ℹ️ Para isso basta nos enviar aqui, um comprovante de depósito na sua conta da SupraBets. "
+        text += "Nossa equipe irá analisar rapidinho e se estiver tudo de acordo, você receberá o link para fazer parte do nosso canal 🚀"
+
+        context.bot.send_message(chat_id=query.message.chat_id, text=text, reply_markup=reply_markup)
+
+    elif query.data == "send_proof":
+        query.edit_message_reply_markup(reply_markup=None)
+        context.bot.send_message(chat_id=query.message.chat_id, text="Por favor, envie seu comprovante . . .")
+
+    elif query.data.startswith("add_to_vip:"):
+        chat_id = int(query.data.split(':')[1])
+        link = context.bot.export_chat_invite_link(chat_id=-1001980761038)
+        context.bot.send_message(chat_id=chat_id, text="✅ Está tudo certo! Aqui está o seu link exclusivo: " + link)
+        
+        keyboard = [
+            [
+                InlineKeyboardButton("Finalizar", callback_data='finalize'),
+            ]
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        context.bot.send_message(chat_id=chat_id, text="🤝 Aproveite o Vip e bons lucros!", reply_markup=reply_markup)
+
+    elif query.data == "finalize":
+        context.bot.send_message(chat_id=query.message.chat_id, text="👋")
+
+def handle_file(update: Update, context: CallbackContext) -> None:
+    file_id = update.message.photo[-1].file_id if update.message.photo else update.message.document.file_id
+    chat_id = update.message.chat_id
+    username = update.message.from_user.username
+    first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+
+    if username:
+        username = '@' + username
+
+    user_info = f"Usuário: {username}\nNome: {first_name} {last_name}\nChat ID: {chat_id}"
+
+    context.bot.send_message(chat_id=1820571821, text=user_info)
+    context.bot.send_photo(chat_id=1820571821, photo=file_id)
+
+    update.message.reply_text("😀Obrigado pelo envio! Aguarde um instante enquanto nossa equipe verifica o comprovante e logo você será adicionado ao TipsMasters Vip.")
+    
+    keyboard = [
+        [
+            InlineKeyboardButton("Adicionar ao VIP", callback_data=f'add_to_vip:{chat_id}'),
+        ]
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    context.bot.send_message(chat_id=1820571821, text="Adicione este usuário ao VIP:", reply_markup=reply_markup)
 
 
 @app.route('/')
-def index():
-    return 'Bot em execução!'
+def home():
+    global updater
+    return render_template('index.html', bot_status=updater is not None)
 
-@app.route('/<token>', methods=['POST'])
-def webhook(token):
-    if token == TOKEN:
-        update = telegram.Update.de_json(request.get_json(force=True), bot)
-        dispatcher.process_update(update)
-    return 'ok'
-
-def main():
-    bot = telegram.Bot(TOKEN)
-    updater = Updater(token=TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(Filters.photo, receber_foto))
-    dispatcher.add_handler(CallbackQueryHandler(button))
-
-    updater.start_polling()
-    updater.idle()
+@app.route('/toggle', methods=['POST'])
+def toggle_bot():
+    global updater, bot_thread
+    if updater is None:
+        updater = Updater(token=TOKEN, use_context=True)
+        updater.dispatcher.add_handler(CommandHandler("start", start))
+        updater.dispatcher.add_handler(CallbackQueryHandler(button))
+        updater.dispatcher.add_handler(MessageHandler(Filters.photo | Filters.document, handle_file))
+        bot_thread = Thread(target=updater.start_polling)
+        bot_thread.start()
+    else:
+        updater.stop()
+        updater = None
+        bot_thread.join()
+        bot_thread = None
+    return '', 204
 
 if __name__ == '__main__':
-    main()
-    app.run(host='0.0.0.0', port=3000)
+    app.run(port=3000)
+
