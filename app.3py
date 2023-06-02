@@ -1,11 +1,5 @@
-from flask import Flask, request
-import telegram
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-
-
-app = Flask(__name__)
-TOKEN = '6249631383:AAGN7i8eoqh-QOZyq5aFYmhYdPcE_f6UDN0'
 
 
 def start(update, context):
@@ -30,11 +24,13 @@ def receber_foto(update, context):
     photo = update.message.photo[-1]
     photo_file_id = photo.file_id
 
+    
     user = update.message.from_user
     username = user.username
     first_name = user.first_name
     last_name = user.last_name
 
+    
     chat_id = update.message.chat_id
     outras_informacoes = ""
 
@@ -50,34 +46,19 @@ def button(update, context):
         entrar_vip(update, context)
     elif query.data == 'enviar_comprovante':
         query.message.reply_text('Por favor, envie o comprovante de depósito...')
+        
         query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup([]))
     elif query.data == 'finalizar':
         query.message.reply_text('👋')
-
-
-@app.route('/<token>', methods=['POST'])
-def webhook(token):
-    if token == TOKEN:
-        update = telegram.Update.de_json(request.get_json(force=True), bot)
-        dispatcher.process_update(update)
-    return 'ok'
-
-
 def main():
-    global updater, bot, dispatcher
-    bot = telegram.Bot(TOKEN)
-    updater = Updater(token=TOKEN, use_context=True)
+    
+    updater = Updater(token='6249631383:AAGN7i8eoqh-QOZyq5aFYmhYdPcE_f6UDN0', use_context=True)
     dispatcher = updater.dispatcher
-
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(MessageHandler(Filters.photo, receber_foto))
     dispatcher.add_handler(CallbackQueryHandler(button))
-
     updater.start_polling()
     updater.idle()
 
-
 if __name__ == '__main__':
     main()
-    app.run()
-
