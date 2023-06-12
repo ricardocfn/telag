@@ -46,7 +46,7 @@ def button(update: Update, context: CallbackContext) -> None:
 
     elif query.data.startswith("add_to_vip:"):
         chat_id = int(query.data.split(':')[1])
-        link = context.bot.export_chat_invite_link(chat_id=-1001980761038)
+        link = context.bot.export_chat_invite_link(chat_id=-1001581344401)
         context.bot.send_message(chat_id=chat_id, text="✅ Está tudo certo! Aqui está o seu link exclusivo: " + link)
         
         keyboard = [
