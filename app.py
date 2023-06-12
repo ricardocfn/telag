@@ -35,10 +35,10 @@ def button(update: Update, context: CallbackContext) -> None:
 
         text = "⭐️ No TipsMaster Vip você tem acesso a bilhetes prontos com ODDS turbinadas diariamente!\n\n"
         text += "✅ Você pode fazer parte do canal gratuitamente! Isso mesmo, 0800!\n\n"
-        text += "<b>ℹ️ Para isso basta nos enviar aqui, um comprovante de depósito de qualquer valor na sua conta da SupraBets, caso ainda nao tenha uma conta cadastre-se aqui ➡ https://bit.ly/3Lxa6p2</b>", parse_mode=ParseMode.HTML
+        text += "<b>ℹ️ Para isso basta nos enviar aqui, um comprovante de depósito de qualquer valor na sua conta da SupraBets, caso ainda nao tenha uma conta cadastre-se aqui ➡ https://bit.ly/3Lxa6p2</b>"
         text += "Nossa equipe irá analisar rapidinho e se estiver tudo de acordo, você receberá o link para fazer parte do nosso canal 🚀"
 
-        context.bot.send_message(chat_id=query.message.chat_id, text=text, reply_markup=reply_markup)
+        context.bot.send_message(chat_id=query.message.chat_id, text=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
     elif query.data == "send_proof":
         query.edit_message_reply_markup(reply_markup=None)
