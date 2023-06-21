@@ -12,7 +12,7 @@ bot_thread = None
 def start(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [
-            InlineKeyboardButton("🚀Com certeza", callback_data='1'),
+            InlineKeyboardButton("🚀Com certeza!", callback_data='1'),
             InlineKeyboardButton("❌Não", callback_data='2'),
         ]
     ]
