@@ -19,7 +19,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text('👋  Olá, bem vindo! O canal TipsMaster e a Suprabets estão promovendo um Mega Sorteio! O Ganhador receberá uma Banca em seu nome, recheada com R💲3.000,00\n\nQuer participar?', reply_markup=reply_markup)
+    update.message.reply_text('👋  Olá, bem vindo! O canal TipsMaster e a Suprabets estão promovendo um Mega Sorteio! O Ganhador receberá uma Banca em seu nome, recheada com R💲4.000,00\n\nQuer participar?', reply_markup=reply_markup)
 
 def button(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
