@@ -10,6 +10,20 @@ updater = None
 bot_thread = None
 
 def start(update: Update, context: CallbackContext) -> None:
+    with open("metrics.txt", "a+") as file:
+        file.seek(0)
+        data = file.read(1)
+        if not data:
+            file.write("start: 1, join_vip: 0, participate_raffle: 0")
+        else:
+            file.seek(0)
+            lines = file.readlines()
+            metrics = lines[-1].strip().split(", ")
+            metrics_dict = {metric.split(": ")[0]: int(metric.split(": ")[1]) for metric in metrics}
+            metrics_dict["start"] += 1
+            file.write("\nstart: {}, join_vip: {}, participate_raffle: {}".format(metrics_dict["start"], metrics_dict["join_vip"], metrics_dict["participate_raffle"]))
+
+    # O resto do código vai aqui...
     keyboard = [
         [InlineKeyboardButton("1️⃣ Entrar para o TipsMaster Vip ", callback_data='join_vip')],
         [InlineKeyboardButton("2️⃣ Participar do Sorteio Banca de R$ 4.000,00", callback_data='2')],
@@ -24,6 +38,15 @@ def button(update: Update, context: CallbackContext) -> None:
     query.answer()
 
     if query.data == 'join_vip':
+        with open("metrics.txt", "a+") as file:
+            file.seek(0)
+            lines = file.readlines()
+            metrics = lines[-1].strip().split(", ")
+            metrics_dict = {metric.split(": ")[0]: int(metric.split(": ")[1]) for metric in metrics}
+            metrics_dict["join_vip"] += 1
+            file.write("\nstart: {}, join_vip: {}, participate_raffle: {}".format(metrics_dict["start"], metrics_dict["join_vip"], metrics_dict["participate_raffle"]))
+
+        
         context.user_data['last_button'] = 'join_vip'
         context.user_data['step'] = 'join_vip'
         keyboard = [
@@ -62,6 +85,15 @@ def button(update: Update, context: CallbackContext) -> None:
         context.bot.send_message(chat_id=query.message.chat_id, text="👋")
         
     elif query.data == '2':
+        with open("metrics.txt", "a+") as file:
+            file.seek(0)
+            lines = file.readlines()
+            metrics = lines[-1].strip().split(", ")
+            metrics_dict = {metric.split(": ")[0]: int(metric.split(": ")[1]) for metric in metrics}
+            metrics_dict["participate_raffle"] += 1
+            file.write("\nstart: {}, join_vip: {}, participate_raffle: {}".format(metrics_dict["start"], metrics_dict["join_vip"], metrics_dict["participate_raffle"]))
+
+        
         context.user_data['last_button'] = '2'
         context.user_data['step'] = 'name'
         query.edit_message_text(text="💥 O canal TipsMaster e a Suprabets estão promovendo um Mega Sorteio! O Ganhador receberá uma Banca em seu nome, recheada com R💲4.000,00\n\nVamos precisar apenas de alguns dados:\n\n1️⃣  Digite seu nome completo:")
