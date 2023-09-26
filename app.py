@@ -5,7 +5,7 @@ from threading import Thread
 
 app = Flask(__name__)
 
-TOKEN = '6249631383:AAGN7i8eoqh-QOZyq5aFYmhYdPcE_f6UDN0'
+TOKEN = ''
 updater = None
 bot_thread = None
 
